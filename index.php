@@ -131,6 +131,71 @@ class Computer {
      * 
      * 
 */
+
+class User {
+    private $username, $password, $age;
+
+    private static $usernameErrorMessage = "Username deve essere minimo 3 massimo 16 caratteri";
+    private static $pwdErrorMessage = "Password deve contenere almeno 1 carattere speciale";
+    private static $ageErrorMessage = "L'età deve essere un numero compreso tra 1 e infinito";
+
+    private static function handleError($message) {
+        throw new Exception($message);
+    }
+
+    function __construct($username, $password) {
+        $this -> setUserName($username);
+        $this -> setPwd($password);
+    }
+
+    function getUserName() {
+        return $this -> username;
+    }
+
+    function setUserName($username) {
+        if (strlen($username) > 3 && strlen($username) < 16) {
+            $this -> username = strtolower($username);
+        } else {
+            self::handleError(self::$usernameErrorMessage);
+        }
+        
+    }
+
+    function getPwd() {
+        return $this -> password;
+    }
+
+    function setPwd($password) {
+        $pattern = "/[\.\^\$\*\+\-\?\(\)\[\]\{\}\\\|\—\!\@]/";
+        if (preg_match($pattern, $password)) {
+            $this -> password = $password;
+        } else {
+            self::handleError(self::$pwdErrorMessage);
+        }
+         
+    }
+
+    function getAge() {
+        return $this -> age;
+    }
+
+    function setAge($age) {
+        if (is_int($age) && $age > 0) {
+            $this -> age = $age;
+        } else {
+            self::handleError(self::$ageErrorMessage);
+        }
+        
+    }
+
+    function printMe() {
+        echo $this;
+    }
+
+    function __toString() {
+        return $this -> getUserName() . ": " . $this -> getAge() . " [" . $this -> getPwd() . "]";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -147,7 +212,7 @@ class Computer {
         
 
         try {
-            $computer = new Computer("1234AA", 1000);
+            $computer = new Computer("123444", 1000);
             
             $computer -> setBrand("123456");
             $computer -> setModel("123456HP");
@@ -156,7 +221,18 @@ class Computer {
             echo 'Errore: ' .  $e->getMessage() . "<br>";
         }
 
-        echo $computer;
+        echo $computer . "<br>";
+
+        try {
+            $user = new User("franc", "pwd123");
+            
+            $user -> setAge("35");
+
+        } catch (Exception $e) {
+            echo 'Errore: ' .  $e->getMessage() . "<br>";
+        }
+
+        echo $user . "<br>";
     ?>
 
 </body>
